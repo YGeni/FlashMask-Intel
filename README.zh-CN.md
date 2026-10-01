@@ -137,8 +137,8 @@ Flash Mask 输出带版本标识、自解释的标准 JSON 数据，内置像素
 
 ### 环境要求
 
-- Apple Silicon 或 Intel Mac（通用 `arm64` + `x86_64` 构建），运行 **macOS 13** 或更高版本
-- 安装完整 **Xcode**
+- 安装完整 **Xcode** 的 Mac；构建主机的 macOS 版本必须受该 Xcode 版本支持
+- App 最低目标为 **macOS 13.0**，并构建为通用二进制（`arm64` + `x86_64`）
 - 纯 Swift、AppKit 与 WebKit 构建，无外部 Swift 依赖包（Zero external Swift dependencies）
 
 ### 构建命令
@@ -151,27 +151,33 @@ xcodebuild \
   -scheme 'Flash Mask' \
   -configuration Release \
   -derivedDataPath '.derivedData/local' \
+  ONLY_ACTIVE_ARCH=NO \
   CODE_SIGNING_ALLOWED=NO \
   build
 ```
 
 **构建产物路径**：`.derivedData/local/Build/Products/Release/Flash Mask.app`
 
-该命令执行无签名本地构建，编译原生包装外壳并将 `index.html` 及应用资源打包成独立 App。此构建命令已在 macOS 26.6.2 / Xcode 26.6 环境下实测验证。构建产物为**通用二进制**（`arm64` + `x86_64`），可同时运行在 Apple Silicon 与 Intel Mac（macOS 13 或更高版本）上。
+该命令创建无签名本地构建，编译原生包装外壳并将 `index.html` 及应用资源打包成独立 App。Release 配置的最低系统为 macOS 13.0，并同时构建 `arm64` 与 `x86_64`。官方 App Store 版本通过独立的 Xcode Archive 与分发流程生成，不使用此本地构建命令。
 
 ### 一键构建脚本
 
 也可以使用仓库自带的 `build.sh` 脚本（运行 `./build.sh --help` 查看全部选项）：
 
 ```sh
-./build.sh                                                 # 无签名本地构建
-./build.sh --team <你的TeamID>                              # 用自己的团队签名
-./build.sh --team <你的TeamID> --bundle-id com.你的名字.flashmask --dmg
+./build.sh
+./build.sh --version 1.3 --build-number 8 --dmg
 ```
 
-签名时请使用**你自己的** Team ID 与 Bundle ID。若需在 Mac App Store 之外分发，签名后还需用 `notarytool` 公证并 `stapler` 钉附，再用相同命令重新生成 DMG。
+脚本默认版本为 `1.2`、构建号为 `7`；可用 `--version` 和 `--build-number` 覆盖。它会检查构建产物的版本、最低 macOS 版本和两种架构。`--dmg` 会把无签名 App 打包为本地测试 DMG，该 DMG 不适合通过 Gatekeeper 分发。
 
-> **签名与分发说明**：若需在 Xcode 中直接调试运行或生成已签名的二进制产物，请在 Xcode 的 *Signing & Capabilities* 中选择您自己的 Apple 开发者证书（Development Team）。若您分发基于本源码的衍生版本，请使用您自己的 Bundle ID、应用名称和品牌资产，并自行负责代码签名与平台审核。
+若要在 Mac App Store 之外分发，请先使用自己的 **Developer ID Application** 身份和安全时间戳签名，验证代码签名后提交公证；Apple 接受后钉附并验证公证票据。随后用以下命令打包同一个 App：
+
+```sh
+./build.sh --package-app "/path/to/stapled/Flash Mask.app"
+```
+
+`--package-app` 会检查 Developer ID 签名、安全时间戳、公证票据、macOS 13.0 最低版本和双架构，然后直接生成带版本号的 DMG，不会再次运行 `xcodebuild` 或签名。此脚本不签名、不公证、不归档，也不生成官方 App Store 版本。衍生版本必须使用自己的 Bundle ID、应用名称和品牌资产。
 
 ## 运行核心测试
 
