@@ -1,6 +1,6 @@
 # Flash Mask
 
-[![Release](https://img.shields.io/github/v/release/sudoHG/FlashMask?style=flat-square&label=release)](https://github.com/sudoHG/FlashMask/releases/latest) [![Stars](https://img.shields.io/github/stars/sudoHG/FlashMask?style=flat-square&label=stars)](https://github.com/sudoHG/FlashMask/stargazers) [![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](LICENSE) [![macOS](https://img.shields.io/badge/macOS-26%2B-black?style=flat-square)](https://apps.apple.com/us/app/flash-mask/id6803817818?mt=12) [![Apple Silicon](https://img.shields.io/badge/Apple_Silicon-arm64-black?style=flat-square)](https://apps.apple.com/us/app/flash-mask/id6803817818?mt=12) [![README views](https://hits.sh/github.com/sudoHG/FlashMask.svg?style=flat-square&label=README%20views)](https://hits.sh/github.com/sudoHG/FlashMask/)
+[![Release](https://img.shields.io/github/v/release/sudoHG/FlashMask?style=flat-square&label=release)](https://github.com/sudoHG/FlashMask/releases/latest) [![Stars](https://img.shields.io/github/stars/sudoHG/FlashMask?style=flat-square&label=stars)](https://github.com/sudoHG/FlashMask/stargazers) [![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](LICENSE) [![macOS](https://img.shields.io/badge/macOS-13%2B-black?style=flat-square)](https://apps.apple.com/us/app/flash-mask/id6803817818?mt=12) [![Universal](https://img.shields.io/badge/Universal-arm64%20%2B%20x86__64-black?style=flat-square)](https://apps.apple.com/us/app/flash-mask/id6803817818?mt=12) [![README views](https://hits.sh/github.com/sudoHG/FlashMask.svg?style=flat-square&label=README%20views)](https://hits.sh/github.com/sudoHG/FlashMask/)
 
 [简体中文](README.zh-CN.md) | English
 
@@ -137,8 +137,8 @@ This repository provides the complete open-source code for the Flash Mask macOS 
 
 ### Prerequisites
 
-- Apple Silicon Mac (`arm64` architecture) running **macOS 26** or later
-- Full installation of **Xcode** with the **macOS 26 SDK**
+- Apple Silicon or Intel Mac (universal `arm64` + `x86_64` build) running **macOS 13** or later
+- Full installation of **Xcode**
 - Pure Swift, AppKit, and WebKit build—zero external Swift package dependencies
 
 ### Build Command
@@ -157,7 +157,19 @@ xcodebuild \
 
 **Build output location**: `.derivedData/local/Build/Products/Release/Flash Mask.app`
 
-This command runs an unsigned local build, compiling the native wrapper and bundling `index.html` and application resources into a standalone app. Verified on macOS 26.6.2 and Xcode 26.6.
+This command runs an unsigned local build, compiling the native wrapper and bundling `index.html` and application resources into a standalone app. Verified on macOS 26.6.2 and Xcode 26.6. The build produces a **universal binary** (`arm64` + `x86_64`) that runs on both Apple Silicon and Intel Macs (macOS 13 or later).
+
+### One-Command Build Script
+
+Alternatively, use the included `build.sh` script (run `./build.sh --help` for details):
+
+```sh
+./build.sh                                                 # unsigned local build
+./build.sh --team <YOUR_TEAM_ID>                           # signed with your own team
+./build.sh --team <YOUR_TEAM_ID> --bundle-id com.yourname.flashmask --dmg
+```
+
+When signing, use **your own** Team ID and Bundle ID. For distribution outside the Mac App Store, notarize the signed app with `notarytool`, staple it, then rebuild the DMG with the same command.
 
 > **Code Signing & Distribution**: To run directly from Xcode or produce signed binaries, select your own Development Team under *Signing & Capabilities* in Xcode. If you distribute derivative builds based on this source code, you must use your own Bundle ID, app name, and brand assets, and manage your own code signing and platform review.
 
