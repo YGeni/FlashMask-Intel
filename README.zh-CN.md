@@ -177,7 +177,7 @@ xcodebuild \
 ./build.sh --package-app "/path/to/stapled/Flash Mask.app"
 ```
 
-`--package-app` 会检查 Developer ID 签名、安全时间戳、公证票据、macOS 13.0 最低版本和双架构，然后直接生成带版本号的 DMG，不会再次运行 `xcodebuild` 或签名。此脚本不签名、不公证、不归档，也不生成官方 App Store 版本。衍生版本必须使用自己的 Bundle ID、应用名称和品牌资产。
+`--package-app` 会检查 Developer ID 签名、安全时间戳、公证票据、macOS 13.0 最低版本和双架构，然后直接生成带版本号的 DMG，不会再次运行 `xcodebuild` 或签名。DMG 本身仍未签名；直接分发时，对外层容器的签名、公证和钉附需要另行完成。此脚本不签名、不公证、不归档，也不生成官方 App Store 版本。衍生版本必须使用自己的 Bundle ID、应用名称和品牌资产。
 
 ## 运行核心测试
 

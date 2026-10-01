@@ -177,7 +177,7 @@ For distribution outside the Mac App Store, sign the app with your own **Develop
 ./build.sh --package-app "/path/to/stapled/Flash Mask.app"
 ```
 
-`--package-app` verifies the Developer ID signature, secure timestamp, notarization ticket, macOS 13.0 minimum, and both architecture slices, then creates a versioned DMG without running `xcodebuild` or signing again. The helper does not sign, notarize, archive, or produce an official App Store build. Derivative builds must use their own Bundle ID, app name, and brand assets.
+`--package-app` verifies the Developer ID signature, secure timestamp, notarization ticket, macOS 13.0 minimum, and both architecture slices, then creates a versioned DMG without running `xcodebuild` or signing again. The DMG itself remains unsigned; signing, notarizing, and stapling that outer container are separate steps for direct distribution. The helper does not sign, notarize, archive, or produce an official App Store build. Derivative builds must use their own Bundle ID, app name, and brand assets.
 
 ## Running Core Tests
 

@@ -127,14 +127,14 @@ verify_notarized_signature() {
 create_dmg() {
   APP_NAME=$(basename "$APP_PATH")
   DMG_NAME="FlashMask-${APP_VERSION}-b${APP_BUILD}-Universal.dmg"
-  DMG_ROOT='.dmgroot'
+  DMG_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/flashmask-dmg.XXXXXX")
+  trap 'rm -rf "$DMG_ROOT"' 0
   printf '\n%s\n' "==> Creating DMG: $DMG_NAME"
-  rm -rf "$DMG_ROOT"
-  mkdir -p "$DMG_ROOT"
   cp -R "$APP_PATH" "$DMG_ROOT/$APP_NAME"
   ln -sfn /Applications "$DMG_ROOT/Applications"
   hdiutil create -volname 'Flash Mask' -srcfolder "$DMG_ROOT" -ov -format UDZO "$DMG_NAME" >/dev/null
   rm -rf "$DMG_ROOT"
+  trap - 0
   printf '%s\n' "==> DMG: $(pwd)/$DMG_NAME"
 }
 
