@@ -111,7 +111,8 @@ read_app_metadata() {
   [ "$APP_MINIMUM_OS" = '13.0' ] || fail "Expected minimum macOS 13.0, found $APP_MINIMUM_OS"
   APP_EXECUTABLE_PATH="$APP_PATH/Contents/MacOS/$APP_EXECUTABLE"
   [ -f "$APP_EXECUTABLE_PATH" ] || fail "Missing app executable: $APP_EXECUTABLE_PATH"
-  lipo -verify_arch arm64 x86_64 "$APP_EXECUTABLE_PATH" || fail 'App is missing an arm64 or x86_64 slice'
+  lipo "$APP_EXECUTABLE_PATH" -verify_arch arm64 || fail 'App is missing the arm64 slice'
+  lipo "$APP_EXECUTABLE_PATH" -verify_arch x86_64 || fail 'App is missing the x86_64 slice'
 }
 
 verify_notarized_signature() {
